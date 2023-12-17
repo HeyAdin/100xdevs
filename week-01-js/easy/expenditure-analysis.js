@@ -6,36 +6,27 @@
 */
 
 function calculateTotalSpentByCategory(transactions) {
-  let expense = [];
-    if(transactions.length==0){
-      return expense;
-    }
-    expense = transactions.map((lists)=>({category:lists.category,totalSpent:lists.price}));
-    for(let i = 0; i < expense.length; i++){
-        for(let j = i+1; j<expense.length; j++){
-            if(expense[i]["category"]== expense[j]["category"]){
-                expense[i]["totalSpent"]=expense[i]["totalSpent"]+expense[j]["totalSpent"];
-                expense.splice(j,1);
-            }
-        }
-    }
+  // Create an empty object
+  let categorySpending = {};
 
-    return expense;
+  // iterate on transactions array
+
+  transactions.forEach((transaction)=>{
+    
+    const {category , price} = transaction;
+    if(category in categorySpending){
+      categorySpending[category]+=price;
+    }
+    else{
+      categorySpending[category] = price;
+    }
+  })
+  const expense = Object.keys(categorySpending).map((category)=>({
+    category : category,
+    totalSpent : categorySpending[category],
+  }));
+
+  return expense;
 }
+
 module.exports = calculateTotalSpentByCategory;
-
-
-// const categoryMap = {};
-//   const result = [];
-
-//   transactions.forEach((element) => {
-//     !categoryMap[element.category]
-//       ? (categoryMap[element.category] = element.price)
-//       : (categoryMap[element.category] += element.price);
-//   });
-
-//   for (let key in categoryMap) {
-//     result.push({ category: key, totalSpent: categoryMap[key] });
-//   }
-
-//   return result;
