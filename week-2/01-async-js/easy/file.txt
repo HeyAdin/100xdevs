@@ -1,0 +1,2 @@
+Hello! This is an example text within a file.
+Feel free to replace it with any content you want to read.
