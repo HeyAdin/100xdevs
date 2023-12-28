@@ -5,6 +5,16 @@
  */
 
 function sleep(milliseconds) {
+    return new Promise(function(resolve){
+        const initialTime = Date.now();
+        for(let i=0;i<1000000000000;i++){
+            let a = i;
+            if(Date.now()==(initialTime+milliseconds)){
+                resolve();
+                break;
+            }
+        }
+    })
 }
 
 module.exports = sleep;
