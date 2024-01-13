@@ -39,11 +39,58 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
-  
-  const app = express();
-  
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
+
+app.use(bodyParser.json());
+const PORT = 3000;
+
+let todo = [];
+
+app.get('/todos', (req, res) => {
+  res.status(200).json(todo);
+});
+
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id - 1;
+  const task = todo[id];
+  res.status(200).json(task);
+});
+
+app.post('/todos', (req, res) => {
+  const todoItems = req.body;
+  todo.push(todoItems);
+  console.log("Todo Added");
+  res.status(201).json({ id: todo.length });
+});
+
+app.put('/todos/:id', (req, res) => {
+  const body = req.body;
+  let id = (req.params.id) - 1;
+  if (todo[id].title == body.title) {
+    todo[id] = body;
+    res.status(200).send("200 OK");
+  }
+  else {
+    res.status(404).send("404 Not Found")
+  }
+});
+
+app.delete('/todos/:id', (req, res) => {
+  let id = (req.params.id) - 1;
+  if (todo[id]) {
+    todo.splice(id, 1);
+    res.status(200).send("200 OK");
+  }
+  else {
+    res.status(404).send("404 Not Found")
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server Started at ${PORT} Port`);
+});
+
+module.exports = app;
