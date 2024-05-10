@@ -45,7 +45,6 @@ const bodyParser = require('body-parser');
 const app = express();
 
 app.use(bodyParser.json());
-const PORT = 3000;
 
 let todo = [];
 
@@ -54,28 +53,47 @@ app.get('/todos', (req, res) => {
 });
 
 app.get('/todos/:id', (req, res) => {
-  const id = req.params.id - 1;
-  const task = todo[id];
-  res.status(200).json(task);
+  const id = parseInt(req.params.id);
+  const isIdPresent = todo.find((t) => t.id === id - 1);
+  if (isIdPresent == undefined) {
+    res.status(404).send('id not found');
+    return;
+  }
+  // console.log(todo ,isIdPresent, id);
+  isIdPresent.id = id;
+  res.status(200).json(isIdPresent);
 });
 
 app.post('/todos', (req, res) => {
   const todoItems = req.body;
+  todoItems["id"] = todo.length;
   todo.push(todoItems);
-  console.log("Todo Added");
+  // console.log("Todo Added");
   res.status(201).json({ id: todo.length });
 });
 
 app.put('/todos/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const isIdPresent = todo.find((t) => t.id === id );
+  console.log(isIdPresent,todo,id);
+  if (isIdPresent == undefined) {
+    res.status(404).send('id not found');
+    return;
+  }
   const body = req.body;
-  let id = (req.params.id) - 1;
-  if (todo[id].title == body.title) {
-    todo[id] = body;
-    res.status(200).send("200 OK");
-  }
-  else {
-    res.status(404).send("404 Not Found")
-  }
+  isIdPresent.title = body.title;
+  isIdPresent.description = body.description;
+  console.log(isIdPresent);
+  res.send("OK");
+  // const body = req.body;
+  // let id = (req.params.id) - 1;
+  // if (todo[id].title == body.title) {
+  //   todo[id] = body;
+  //   res.status(200).send("200 OK");
+  // }
+  // else {
+  //   res.status(404).send("404 Not Found")
+  // }
 });
 
 app.delete('/todos/:id', (req, res) => {
@@ -89,8 +107,5 @@ app.delete('/todos/:id', (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server Started at ${PORT} Port`);
-});
 
 module.exports = app;
